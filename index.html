@@ -1,51 +1,68 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>G3 Syllabus: Blood Composition VR</title>
+    <title>G3 Bio: Blood Clotting VR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   </head>
   <body>
-    <a-scene fog="type: exponential; color: #550000; density: 0.1">
+    <a-scene fog="type: exponential; color: #400000; density: 0.1">
       
       <a-assets>
-        <a-mixin id="rbc" geometry="primitive: torus; radius: 0.5; tube: 0.2" material="color: #880000" scale="1 1 0.4"></a-mixin>
+        <!-- Red Blood Cell Template -->
+        <a-mixin id="rbc" geometry="primitive: torus; radius: 0.4; tube: 0.15" material="color: #990000" scale="1 1 0.4"></a-mixin>
+        <!-- Platelet Template (Small, irregular) -->
+        <a-mixin id="platelet" geometry="primitive: dodecahedron; radius: 0.12" material="color: #ffcc00"></a-mixin>
       </a-assets>
 
       <a-sky color="#200000"></a-sky>
 
-      <a-entity position="0 0 0">
-        <a-entity mixin="rbc" position="2 1 -5" rotation="45 20 0"></a-entity>
-        <a-entity mixin="rbc" position="-2 3 -4" rotation="10 60 30"></a-entity>
-        <a-entity mixin="rbc" position="0 -1 -6" rotation="90 0 0"></a-entity>
-        <a-entity mixin="rbc" position="4 2 -8" rotation="30 10 80"></a-entity>
-        <a-entity mixin="rbc" position="-3 0 -7" rotation="0 0 45"></a-entity>
-        <a-entity mixin="rbc" position="1 4 -5" rotation="15 45 10"></a-entity>
-        <a-entity mixin="rbc" position="-5 2 -3" rotation="0 90 0"></a-entity>
+      <!-- 1. THE FLOWING STREAM (Background) -->
+      <a-entity animation="property: position; from: 0 0 -10; to: 0 0 10; dur: 15000; loop: true; easing: linear">
+        <a-entity mixin="rbc" position="2 1 -5"></a-entity>
+        <a-entity mixin="rbc" position="-3 4 -8"></a-entity>
+        <a-entity mixin="platelet" position="1 2 -3"></a-entity>
       </a-entity>
 
-      <a-entity position="0 2 -10">
-         <a-sphere radius="2" color="#ffffff" opacity="0.4" roughness="1">
-            <a-sphere radius="0.4" color="#440066" position="0.5 0.5 0"></a-sphere>
-            <a-sphere radius="0.5" color="#440066" position="-0.3 -0.2 0.3"></a-sphere>
-            <a-sphere radius="0.4" color="#440066" position="0.1 -0.6 -0.2"></a-sphere>
+      <!-- 2. THE CLOTTING SITE (Fibrin Mesh) -->
+      <a-entity position="0 2 -15">
+        <!-- Fibrin Threads: Represented by thin, yellowish cylinders -->
+        <a-cylinder color="#ddd" height="10" radius="0.02" rotation="45 45 0" opacity="0.8"></a-cylinder>
+        <a-cylinder color="#ddd" height="10" radius="0.02" rotation="-45 30 45" opacity="0.8"></a-cylinder>
+        <a-cylinder color="#ddd" height="10" radius="0.02" rotation="0 90 20" opacity="0.8"></a-cylinder>
+        <a-cylinder color="#ddd" height="10" radius="0.02" rotation="90 10 0" opacity="0.8"></a-cylinder>
+
+        <!-- Trapped Red Blood Cells (Stuck in the mesh) -->
+        <a-entity mixin="rbc" position="0.5 0.5 0" rotation="30 20 10"></a-entity>
+        <a-entity mixin="rbc" position="-0.8 -1 0.2" rotation="0 45 90"></a-entity>
+        <a-entity mixin="rbc" position="0.2 -0.5 -0.5" rotation="10 0 45"></a-entity>
+
+        <!-- Activated Platelets (Clumping) -->
+        <a-entity mixin="platelet" position="0.1 0.1 0.1" scale="1.5 1.5 1.5"></a-entity>
+        <a-entity mixin="platelet" position="-0.2 0.3 -0.1"></a-entity>
+        
+        <a-text value="BLOOD CLOT FORMING\nFibrin threads trapping RBCs" 
+                position="0 4 0" align="center" width="6"></a-text>
+      </a-entity>
+
+      <!-- 3. PHAGOCYTE (Corrected Morphology) -->
+      <a-entity position="-5 3 -12">
+         <a-sphere radius="1.8" color="#ffffff" opacity="0.4">
+            <!-- Lobed Nucleus: Typical of Phagocytes/Neutrophils -->
+            <a-sphere radius="0.4" color="#4B0082" position="0.5 0.3 0"></a-sphere>
+            <a-sphere radius="0.4" color="#4B0082" position="-0.2 -0.4 0.2"></a-sphere>
+            <a-sphere radius="0.3" color="#4B0082" position="0.1 0.2 -0.5"></a-sphere>
          </a-sphere>
-         <a-text value="PHAGOCYTE\nNote the lobed nucleus\nand granular cytoplasm" position="0 3 0" align="center" width="5"></a-text>
+         <a-text value="Phagocyte: Lobed Nucleus" position="0 2.5 0" align="center" width="4"></a-text>
       </a-entity>
 
-      <a-octahedron color="#ffd700" radius="0.15" position="1 2 -4"></a-octahedron>
-      <a-octahedron color="#ffd700" radius="0.1" position="-1.5 1 -5"></a-octahedron>
-
-      <a-entity animation="property: position; from: 0 0 -20; to: 0 0 20; dur: 20000; loop: true; easing: linear">
-          <a-entity mixin="rbc" position="3 0 0"></a-entity>
-          <a-entity mixin="rbc" position="-3 5 -5"></a-entity>
-      </a-entity>
-
-      <a-light type="ambient" intensity="0.5"></a-light>
-      <a-light type="point" position="0 5 0" intensity="1"></a-light>
-
+      <!-- Lighting & Camera -->
+      <a-light type="ambient" intensity="0.6"></a-light>
+      <a-light type="point" position="2 4 -5" intensity="0.8"></a-light>
+      
       <a-entity camera look-controls position="0 1.6 0">
-        <a-cursor color="yellow"></a-cursor>
+        <a-cursor color="yellow" fuse="true"></a-cursor>
       </a-entity>
+
     </a-scene>
   </body>
 </html>
