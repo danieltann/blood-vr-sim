@@ -9,10 +9,8 @@
         init: function () {
           let sceneEl = this.el.sceneEl;
           this.el.addEventListener('click', function () {
-            // Trigger haptic vibration on compatible mobile devices
             if (navigator.vibrate) navigator.vibrate(60);
             
-            // Toggle play/pause state
             if (sceneEl.is('paused')) {
               sceneEl.play();
               this.setAttribute('material', 'color', '#ff3333');
@@ -37,11 +35,11 @@
 
       <a-cylinder radius="6" height="60" rotation="90 0 0" position="0 0 -15" material="color: #3d0505; side: double; openEnded: true"></a-cylinder>
 
-      <a-glowing-wound>
+      <a-entity id="woundZone">
         <a-ellipse color="#1a0000" radius-x="1.5" radius-y="0.8" position="0 -5.9 -15" rotation="-90 0 0"></a-ellipse>
         <a-capsule color="#22aa22" radius="0.1" height="0.4" position="0.2 -5.5 -15" rotation="20 45 10"></a-capsule>
         <a-capsule color="#22aa22" radius="0.1" height="0.4" position="-0.3 -5.6 -14.8" rotation="10 -30 40"></a-capsule>
-      </a-glowing-wound>
+      </a-entity>
 
       <a-entity animation="property: position; from: 0 0 -10; to: 0 0 10; dur: 8000; loop: true; easing: linear">
         <a-entity mixin="plasma-particle" position="-1 2 -3"></a-entity>
@@ -123,8 +121,7 @@
         <a-text value="PAUSE / PLAY" align="center" position="0 0 0.11" width="4" color="#fff"></a-text>
       </a-box>
 
-      <a-entity id="cameraRig"
-                animation="property: position; from: 0 12 5; to: 0 1.6 0; dur: 5000; easing: easeOutQuad">
+      <a-entity id="cameraRig" animation="property: position; from: 0 12 5; to: 0 1.6 0; dur: 5000; easing: easeOutQuad">
         <a-entity camera look-controls wasd-controls>
           <a-cursor color="#ffffff" raycaster="objects: [vr-controls], a-box" fuse="true" fuse-timeout="1500"></a-cursor>
         </a-entity>
