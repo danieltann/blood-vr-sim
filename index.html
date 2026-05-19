@@ -1,124 +1,779 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>O-Level G3 Biology: Advanced Blood & Clotting VR</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  </head>
-  <body>
-    <a-scene>
-      
-      <a-sky color="#2b0202"></a-sky>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood: Transport in Humans — G3 O-Level Biology VR Simulation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0608; --surface: #120d10; --surface2: #1c1218;
+    --border: rgba(220,60,80,0.18); --border2: rgba(220,60,80,0.35);
+    --red: #e8334a; --red-dim: rgba(232,51,74,0.15); --red-glow: rgba(232,51,74,0.4);
+    --plasma: #f5c842; --wbc: #a8e6cf; --platelet: #f4a261; --fibrin: #c9b8ff;
+    --text: #f0e8ea; --text-muted: #8a7880;
+    --font-mono: 'Space Mono', monospace; --font-body: 'DM Sans', sans-serif;
+  }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-body); overflow: hidden; }
 
-      <a-cylinder radius="6" height="60" rotation="90 0 0" position="0 0 -15" color="#3d0505" side="double" open-ended="true"></a-cylinder>
+  /* INTRO */
+  #intro {
+    position: fixed; inset: 0; z-index: 100; background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1.5rem; padding: 2rem; text-align: center;
+  }
+  #intro h1 { font-family: var(--font-mono); font-size: clamp(1.4rem,4vw,2.6rem); color: var(--red); letter-spacing: 0.04em; line-height: 1.2; }
+  #intro .syllabus-tag { background: var(--red-dim); border: 1px solid var(--border2); color: var(--red); font-family: var(--font-mono); font-size: 0.72rem; padding: 0.3rem 0.9rem; border-radius: 4px; letter-spacing: 0.08em; }
+  #intro .desc { max-width: 480px; font-size: 0.93rem; color: var(--text-muted); line-height: 1.7; }
+  #intro button { background: var(--red); color: #fff; border: none; border-radius: 6px; padding: 0.85rem 2.6rem; font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 0.06em; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+  #intro button:hover { opacity: 0.85; }
+  .heartbeat-line { width: min(380px, 80vw); height: 36px; }
 
-      <a-entity id="woundZone">
-        <a-circle color="#1a0000" radius="1.2" scale="1.5 0.8 1" position="0 -5.9 -15" rotation="-90 0 0"></a-circle>
-        
-        <a-sphere color="#22aa22" scale="0.1 0.3 0.1" position="0.2 -5.5 -15" rotation="20 45 10"></a-sphere>
-        <a-sphere color="#22aa22" scale="0.1 0.3 0.1" position="-0.3 -5.6 -14.8" rotation="10 -30 40"></a-sphere>
-      </a-entity>
+  /* APP */
+  #app { display: none; height: 100vh; flex-direction: column; overflow: hidden; }
+  #app.active { display: flex; }
 
-      <a-entity animation="property: position; from: 0 0 -10; to: 0 0 10; dur: 8000; loop: true; easing: linear">
-        <a-sphere color="#b2ebf2" radius="0.04" opacity="0.6" transparent="true" position="-1 2 -3"></a-sphere>
-        <a-sphere color="#b2ebf2" radius="0.04" opacity="0.6" transparent="true" position="2 4 -5"></a-sphere>
-        <a-sphere color="#b2ebf2" radius="0.04" opacity="0.6" transparent="true" position="-2 1 -6"></a-sphere>
-        <a-sphere color="#b2ebf2" radius="0.04" opacity="0.6" transparent="true" position="1.5 3 -2"></a-sphere>
-      </a-entity>
+  /* TOP BAR */
+  .top-bar { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0.55rem 1.1rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .top-bar .logo { font-family: var(--font-mono); font-size: 0.73rem; color: var(--red); letter-spacing: 0.05em; }
+  .nav-tabs { display: flex; gap: 0.2rem; }
+  .nav-tab { background: none; border: 1px solid transparent; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.05em; padding: 0.3rem 0.75rem; border-radius: 4px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+  .nav-tab:hover { border-color: var(--border2); color: var(--text); }
+  .nav-tab.active { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+  .status-dot { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: pulse-dot 1.4s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100%{opacity:1}50%{opacity:0.3} }
 
-      <a-plane color="#111" width="2.5" height="3.2" position="-3.5 2.2 -4" rotation="0 35 0" opacity="0.9" transparent="true">
-        <a-text value="SIMULATION LEGEND" align="center" color="#fff" width="4.5" position="0 1.3 0.01"></a-text>
-        <a-text value="[Red Disc] Red Blood Cell\n[White/Lobed] Phagocyte\n[White/Round] Lymphocyte\n[Yellow] Platelet\n[Cyan Sphere] Plasma Nutrients\n[White Y-Shape] Antibody\n[Grey Grid] Fibrin Mesh" 
-                align="left" color="#ddd" width="3.2" position="-1.1 0 0.01"></a-text>
-      </a-plane>
+  /* MAIN */
+  .main-layout { flex: 1; display: flex; overflow: hidden; }
+  .canvas-panel { flex: 1; position: relative; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+  canvas:active { cursor: grabbing; }
 
-      <a-entity animation="property: position; from: 0 0 -25; to: 0 0 15; dur: 12000; loop: true; easing: linear">
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="2 1.2 -2" rotation="30 10 40"></a-torus>
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="-2.5 3 -5" rotation="10 70 20"></a-torus>
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="1.8 4 -8" rotation="80 20 10"></a-torus>
-        <a-dodecahedron color="#ffcc00" radius="0.08" position="-1 2 -4"></a-dodecahedron>
-      </a-entity>
+  /* HUD */
+  .zoom-controls { position: absolute; bottom: 1rem; right: 1rem; display: flex; gap: 0.35rem; }
+  .zoom-btn { background: rgba(12,8,10,0.8); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 1rem; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .zoom-btn:hover { border-color: var(--red); color: var(--red); }
+  .speed-ctrl { position: absolute; bottom: 1rem; left: 1rem; display: flex; align-items: center; gap: 0.6rem; background: rgba(10,6,8,0.8); border: 1px solid var(--border); padding: 0.4rem 0.8rem; border-radius: 4px; }
+  .speed-ctrl label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .speed-ctrl input[type=range] { width: 75px; accent-color: var(--red); cursor: pointer; }
+  #speed-val { font-family: var(--font-mono); font-size: 0.68rem; color: var(--red); min-width: 28px; }
+  .tooltip { position: absolute; pointer-events: none; background: rgba(10,6,8,0.95); border: 1px solid var(--border2); padding: 0.4rem 0.7rem; border-radius: 4px; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text); white-space: nowrap; opacity: 0; transition: opacity 0.15s; z-index: 10; }
+  .tooltip.show { opacity: 1; }
 
-      <a-entity position="0 4 -5" animation="property: position; from: -4 4 -15; to: 4 4 -5; dur: 10000; loop: true; easing: linear">
-        <a-torus radius="0.4" tube="0.12" scale="1 1 0.4" color="#400000"
-                 animation="property: material.color; type: color; from: #400000; to: #ff1111; dur: 5000; loop: true; dir: alternate"></a-torus>
-      </a-entity>
-      <a-text value="Oxygenation Shift Zone" position="0 4.7 -7" align="center" width="3" color="#fff"></a-text>
+  /* SIDEBAR */
+  .sidebar { width: 290px; flex-shrink: 0; display: flex; flex-direction: column; border-left: 1px solid var(--border); background: var(--surface); overflow-y: auto; }
+  .sb-section { border-bottom: 1px solid var(--border); padding: 0.9rem 1rem; }
+  .sb-section h3 { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
 
-      <a-entity position="-3.5 2 -8">
-        <a-sphere radius="0.9" color="#ffffff" opacity="0.5" transparent="true">
-          <a-sphere radius="0.65" color="#000044" position="0 0 0"></a-sphere>
-        </a-sphere>
-        <a-text value="Lymphocyte" position="0 1.2 0" align="center" width="3.5" color="#fff"></a-text>
-        
-        <a-entity position="0.5 0.5 1" rotation="10 20 0">
-          <a-cylinder color="#ffffff" radius="0.015" height="0.15" position="0 0 0"></a-cylinder>
-          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="0.04 0.09 0" rotation="0 0 -45"></a-cylinder>
-          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="-0.04 0.09 0" rotation="0 0 45"></a-cylinder>
-        </a-entity>
+  /* Toggles */
+  .toggle-list { display: flex; flex-direction: column; gap: 0.4rem; }
+  .tog-row { display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.65rem; border-radius: 5px; cursor: pointer; border: 1px solid transparent; transition: background 0.15s, border-color 0.15s; }
+  .tog-row:hover { background: rgba(255,255,255,0.025); }
+  .tog-row.selected { border-color: var(--sel-border); background: var(--sel-bg); }
+  .tog-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .tog-name { font-size: 0.8rem; font-weight: 500; flex: 1; }
+  .tog-ct { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); }
+  .tog-sw { width: 26px; height: 14px; border-radius: 7px; background: rgba(255,255,255,0.1); position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .tog-sw.on { background: var(--sw-color); }
+  .tog-sw::after { content:''; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+  .tog-sw.on::after { transform: translateX(12px); }
 
-        <a-entity position="0.8 -0.2 1.5" rotation="45 45 10">
-          <a-cylinder color="#ffffff" radius="0.015" height="0.15" position="0 0 0"></a-cylinder>
-          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="0.04 0.09 0" rotation="0 0 -45"></a-cylinder>
-          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="-0.04 0.09 0" rotation="0 0 45"></a-cylinder>
-        </a-entity>
+  /* Clot panel */
+  .clot-btn { width: 100%; padding: 0.6rem 1rem; background: var(--red-dim); border: 1px solid var(--border2); color: var(--red); font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 5px; cursor: pointer; transition: background 0.2s; margin-bottom: 0.65rem; }
+  .clot-btn:hover:not(:disabled) { background: rgba(232,51,74,0.25); }
+  .clot-btn:disabled { opacity: 0.6; cursor: default; }
+  .clot-steps { display: flex; flex-direction: column; gap: 0.28rem; }
+  .cs { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.76rem; color: var(--text-muted); line-height: 1.4; transition: color 0.4s; }
+  .cs.done { color: var(--text); }
+  .cs-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border2); flex-shrink: 0; margin-top: 0.38rem; transition: background 0.4s; }
+  .cs.done .cs-dot { background: var(--red); }
 
-        <a-entity position="2 0.5 0">
-          <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="0 0 0"></a-sphere>
-          <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="0.15 0.1 0.05" rotation="30 45 0"></a-sphere>
-          <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="-0.1 0.1 -0.05" rotation="-20 10 30"></a-sphere>
-          
-          <a-entity position="0.05 0.05 0" rotation="0 45 30">
-            <a-cylinder color="#ffffff" radius="0.012" height="0.12" position="0 0 0"></a-cylinder>
-            <a-cylinder color="#ffffff" radius="0.012" height="0.08" position="0.03 0.07 0" rotation="0 0 -45"></a-cylinder>
-            <a-cylinder color="#ffffff" radius="0.012" height="0.08" position="-0.03 0.07 0" rotation="0 0 45"></a-cylinder>
-          </a-entity>
-          
-          <a-text value="Agglutination" position="0 -0.4 0" align="center" width="2.5" color="#fff"></a-text>
-        </a-entity>
-      </a-entity>
+  /* Info panel */
+  .info-title { font-family: var(--font-mono); font-size: 0.79rem; color: var(--text); margin-bottom: 0.4rem; }
+  .info-body { font-size: 0.77rem; color: var(--text-muted); line-height: 1.65; }
+  .info-body b { color: var(--text); font-weight: 500; }
+  .info-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.55rem; }
+  .i-tag { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.04em; padding: 0.18rem 0.45rem; border-radius: 3px; border: 1px solid; text-transform: uppercase; }
 
-      <a-entity position="3.5 2 -8">
-        <a-sphere radius="1" color="#ffffff" opacity="0.5" transparent="true">
-          <a-sphere radius="0.25" color="#3a005c" position="0.2 0.1 0"></a-sphere>
-          <a-sphere radius="0.23" color="#3a005c" position="-0.1 -0.2 0.1"></a-sphere>
-          <a-sphere radius="0.2" color="#3a005c" position="-0.1 0.2 -0.1"></a-sphere>
-        </a-sphere>
-        <a-text value="Phagocyte" position="0 1.2 0" align="center" width="3.5" color="#fff"></a-text>
-      </a-entity>
+  /* PANEL VIEWS */
+  .pview { display: none; flex: 1; overflow-y: auto; }
+  .pview.active { display: flex; flex-direction: column; }
+  #sim-tab.active { display: flex; flex-direction: row; overflow: hidden; }
 
-      <a-entity position="0 1.6 -12">
-        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="0 0 45" opacity="0" transparent="true" animation="property: material.opacity; from: 0; to: 0.8; dur: 6000; loop: true; dir: alternate"></a-cylinder>
-        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="0 0 -45" opacity="0" transparent="true" animation="property: material.opacity; from: 0; to: 0.8; dur: 6000; loop: true; dir: alternate"></a-cylinder>
-        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="45 90 0" opacity="0" transparent="true" animation="property: material.opacity; from: 0; to: 0.8; dur: 6000; loop: true; dir: alternate"></a-cylinder>
-        
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="0.3 0.2 0" rotation="40 20 10"></a-torus>
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="-0.4 -0.5 0.1" rotation="10 80 45"></a-torus>
-        <a-dodecahedron color="#ffcc00" radius="0.08" position="0 0.6 0.2" scale="1.5 1.5 1.5"></a-dodecahedron>
-        <a-text value="Fibrin Mesh Clot Formation" position="0 2.5 0" align="center" width="4" color="#fff"></a-text>
-      </a-entity>
+  /* QUIZ */
+  #quiz-tab { padding: 0; }
+  .quiz-inner { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.1rem; max-width: 640px; margin: 0 auto; width: 100%; }
+  .q-header { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+  .q-text { font-size: 0.93rem; font-weight: 500; line-height: 1.55; color: var(--text); }
+  .q-opts { display: flex; flex-direction: column; gap: 0.45rem; }
+  .q-opt { padding: 0.6rem 0.95rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; cursor: pointer; font-size: 0.82rem; color: var(--text-muted); transition: border-color 0.15s, color 0.15s; text-align: left; }
+  .q-opt:hover:not(:disabled) { border-color: var(--border2); color: var(--text); }
+  .q-opt.correct { border-color: var(--wbc) !important; color: var(--wbc) !important; background: rgba(168,230,207,0.07) !important; }
+  .q-opt.wrong { border-color: var(--red) !important; color: var(--red) !important; }
+  .q-opt:disabled { cursor: default; }
+  .q-fb { font-size: 0.8rem; line-height: 1.65; color: var(--text-muted); display: none; padding: 0.65rem 0.9rem; background: var(--surface2); border-radius: 5px; border-left: 3px solid var(--red); }
+  .q-fb.show { display: block; }
+  .q-fb.ok { border-left-color: var(--wbc); }
+  .q-nav { display: flex; justify-content: space-between; align-items: center; }
+  .q-nav button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.45rem 1rem; border-radius: 4px; cursor: pointer; font-family: var(--font-mono); font-size: 0.68rem; transition: border-color 0.15s; }
+  .q-nav button:hover:not(:disabled) { border-color: var(--red); color: var(--red); }
+  .q-nav button:disabled { opacity: 0.4; cursor: default; }
+  .q-score { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); }
 
-      <a-entity position="0 1.8 -18">
-        <a-plane color="#333" width="4" height="2.2" opacity="0.95" transparent="true">
-          <a-text value="O-LEVEL REVISION CHECK" align="center" color="#ffcc00" width="5" position="0 0.8 0.01"></a-text>
-          <a-text value="Question: Which component forms the structural mesh network\nresponsible for trapping cells during blood clotting?\n\n[Gaze at your choice to check answer]\n   A) Plasma Proteins      B) Fibrin Threads      C) Phagocytes" 
-                  align="center" color="#fff" width="3.5" position="0 -0.1 0.01"></a-text>
-        </a-plane>
-        
-        <a-box position="0.5 -0.6 0.05" width="1.2" height="0.25" depth="0.1" color="#444"
-               animation__hover="property: material.color; type: color; to: #22aa22; startEvents: click">
-               <a-text value="B) Fibrin" align="center" position="0 0 0.06" width="3" color="#fff"></a-text>
-        </a-box>
-      </a-entity>
+  /* NOTES */
+  #notes-tab { padding: 0; }
+  .notes-inner { padding: 1.2rem 1.5rem; max-width: 660px; margin: 0 auto; width: 100%; }
+  .n-card { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+  .n-card:last-child { border-bottom: none; }
+  .n-card h4 { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .n-card p, .n-card li { font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; }
+  .n-card b { color: var(--text); font-weight: 500; }
+  .n-card ul, .n-card ol { padding-left: 1.1rem; }
 
-      <a-entity id="cameraRig" animation="property: position; from: 0 12 5; to: 0 1.6 0; dur: 5000; easing: easeOutQuad">
-        <a-entity camera look-controls wasd-controls>
-          <a-cursor color="#ffffff" raycaster="objects: a-box" fuse="true" fuse-timeout="1500"></a-cursor>
-        </a-entity>
-      </a-entity>
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-      <a-light type="ambient" intensity="0.6" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="0.5" position="2 4 3"></a-light>
+  @media (max-width: 700px) {
+    #sim-tab.active { flex-direction: column; }
+    .sidebar { width: 100%; height: 210px; border-left: none; border-top: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
 
-    </a-scene>
-  </body>
+<div id="intro">
+  <svg class="heartbeat-line" viewBox="0 0 380 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="0,18 55,18 70,4 80,32 90,18 105,18 160,18 175,4 185,32 195,18 210,18 265,18 280,4 290,32 300,18 315,18 380,18"
+      stroke="#e8334a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="stroke-dasharray" from="0,9999" to="9999,0" dur="2s" fill="freeze"/>
+    </polyline>
+  </svg>
+  <div class="syllabus-tag">G3 Pure Biology · SEAB 6093 · Transport in Humans</div>
+  <h1>Blood Components<br>VR Simulation</h1>
+  <p class="desc">Enter a microscopic view of the bloodstream. Explore red blood cells, white blood cells, platelets and plasma — then watch the full blood clotting cascade in real time.</p>
+  <button onclick="startApp()">Enter Simulation ›</button>
+  <p style="font-size:0.73rem;color:var(--text-muted)">Toggle components · trigger vessel injury · test yourself · read O-Level revision notes</p>
+</div>
+
+<div id="app">
+  <div class="top-bar">
+    <div class="logo">// BLOOD · TRANSPORT IN HUMANS</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="sim" onclick="switchTab('sim')">Simulation</button>
+      <button class="nav-tab" data-tab="quiz" onclick="switchTab('quiz')">O-Level Quiz</button>
+      <button class="nav-tab" data-tab="notes" onclick="switchTab('notes')">Revision Notes</button>
+    </div>
+    <div class="status-dot"><div class="dot"></div>LIVE</div>
+  </div>
+
+  <div id="sim-tab" class="pview active">
+    <div class="canvas-panel">
+      <canvas id="c"></canvas>
+      <div class="tooltip" id="tt"></div>
+      <div class="speed-ctrl">
+        <label>Speed</label>
+        <input type="range" id="spd" min="0.2" max="3" step="0.1" value="1">
+        <span id="speed-val">1.0×</span>
+      </div>
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="doZoom(1.15)">+</button>
+        <button class="zoom-btn" onclick="doZoom(1/1.15)">−</button>
+        <button class="zoom-btn" onclick="resetView()" title="Reset">⌖</button>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="sb-section">
+        <h3>Components</h3>
+        <div class="toggle-list" id="tog-list"></div>
+      </div>
+      <div class="sb-section">
+        <h3>Blood Clotting</h3>
+        <button class="clot-btn" id="clot-btn" onclick="triggerClot()">⚡ Trigger Vessel Injury</button>
+        <div class="clot-steps" id="clot-steps">
+          <div class="cs" id="cs0"><div class="cs-dot"></div>Vessel wall damaged</div>
+          <div class="cs" id="cs1"><div class="cs-dot"></div>Platelets aggregate at wound</div>
+          <div class="cs" id="cs2"><div class="cs-dot"></div>Thromboplastin released</div>
+          <div class="cs" id="cs3"><div class="cs-dot"></div>Prothrombin → Thrombin</div>
+          <div class="cs" id="cs4"><div class="cs-dot"></div>Fibrinogen → Fibrin (insoluble)</div>
+          <div class="cs" id="cs5"><div class="cs-dot"></div>Fibrin mesh traps cells — clot seals wound</div>
+        </div>
+      </div>
+      <div class="sb-section" style="flex:1">
+        <h3>Component Info</h3>
+        <div class="info-title" id="info-title">Click any cell to learn</div>
+        <div class="info-body" id="info-body" style="color:var(--text-muted)">Hover over a cell in the simulation and click it to see syllabus-relevant details.</div>
+        <div class="info-tags" id="info-tags"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="quiz-tab" class="pview">
+    <div class="quiz-inner" id="quiz-inner"></div>
+  </div>
+
+  <div id="notes-tab" class="pview">
+    <div class="notes-inner" id="notes-inner"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const CFG = {
+  rbc:     { label:'Red Blood Cells',    abbr:'RBC', col:'#e8334a', dimCol:'rgba(232,51,74,0.14)',  bCol:'rgba(232,51,74,0.38)',  n:55 },
+  wbc:     { label:'White Blood Cells',  abbr:'WBC', col:'#a8e6cf', dimCol:'rgba(168,230,207,0.11)',bCol:'rgba(168,230,207,0.33)', n:6  },
+  platelet:{ label:'Platelets',          abbr:'PLT', col:'#f4a261', dimCol:'rgba(244,162,97,0.11)', bCol:'rgba(244,162,97,0.33)',  n:22 },
+  fibrin:  { label:'Fibrin / Fibrinogen',abbr:'FIB', col:'#c9b8ff', dimCol:'rgba(201,184,255,0.11)',bCol:'rgba(201,184,255,0.33)', n:0  },
+  plasma:  { label:'Blood Plasma',       abbr:'PLS', col:'#f5c842', dimCol:'rgba(245,200,66,0.1)',  bCol:'rgba(245,200,66,0.33)',  n:0  },
+};
+
+const INFO = {
+  rbc: {
+    title: 'Red Blood Cell (Erythrocyte)',
+    body: `<b>Function:</b> Transports O₂ as oxyhaemoglobin (Hb + O₂) from lungs → tissues; carries CO₂ back.<br><br>
+<b>Structural adaptations:</b><br>
+• <b>Biconcave disc</b> — maximises surface area for gas diffusion<br>
+• <b>No nucleus</b> — more space for ~280 million Hb molecules<br>
+• <b>Flexible membrane</b> — deforms to squeeze through capillaries<br>
+• Produced in red bone marrow; lifespan ~120 days`,
+    tags:[{t:'Erythrocyte',c:'#e8334a'},{t:'O₂ transport',c:'#e8334a'},{t:'Haemoglobin',c:'#e8334a'},{t:'Biconcave disc',c:'#e8334a'}]
+  },
+  wbc: {
+    title: 'White Blood Cell (Leucocyte)',
+    body: `<b>Function:</b> Immune defence against pathogens.<br><br>
+<b>Two main types (O-Level):</b><br>
+• <b>Phagocytes</b> — engulf &amp; digest bacteria by phagocytosis (non-specific)<br>
+• <b>Lymphocytes</b> — produce specific <b>antibodies</b> that bind to antigens<br><br>
+<b>Features:</b> Have a nucleus; can squeeze through capillary walls (diapedesis); count rises during infection`,
+    tags:[{t:'Leucocyte',c:'#a8e6cf'},{t:'Phagocytosis',c:'#a8e6cf'},{t:'Antibodies',c:'#a8e6cf'},{t:'Immune defence',c:'#a8e6cf'}]
+  },
+  platelet: {
+    title: 'Platelet (Thrombocyte)',
+    body: `<b>Function:</b> Initiates blood clotting (haemostasis) to seal vessel injuries.<br><br>
+<b>Key roles:</b><br>
+• Adhere to damaged vessel walls<br>
+• Aggregate to form a temporary <b>platelet plug</b><br>
+• Release chemicals triggering prothrombin → thrombin conversion<br><br>
+<b>Structure:</b> Cell fragments (no nucleus) from megakaryocytes; count 150,000–400,000/mm³`,
+    tags:[{t:'Thrombocyte',c:'#f4a261'},{t:'Clotting',c:'#f4a261'},{t:'Platelet plug',c:'#f4a261'},{t:'Haemostasis',c:'#f4a261'}]
+  },
+  fibrin: {
+    title: 'Fibrin & Fibrinogen',
+    body: `<b>Fibrinogen:</b> Soluble protein dissolved in plasma (made by liver). Always present.<br><br>
+<b>Fibrin:</b> Insoluble threads formed when <b>thrombin</b> acts on fibrinogen during clotting.<br><br>
+<b>Clotting steps:</b><br>
+① Platelets + damaged cells → <b>thromboplastin</b><br>
+② Thromboplastin + Ca²⁺ → prothrombin → <b>thrombin</b><br>
+③ Thrombin → fibrinogen → <b>fibrin</b> threads<br>
+④ Fibrin meshwork traps RBCs → <b>clot</b>`,
+    tags:[{t:'Fibrinogen',c:'#c9b8ff'},{t:'Fibrin mesh',c:'#c9b8ff'},{t:'Clot cascade',c:'#c9b8ff'},{t:'Thrombin',c:'#c9b8ff'}]
+  },
+  plasma: {
+    title: 'Blood Plasma',
+    body: `<b>~55% of blood volume</b> — straw-coloured liquid transport medium.<br><br>
+<b>Contains (~90% water + dissolved):</b><br>
+• <b>Fibrinogen</b> &amp; clotting factors<br>
+• <b>Antibodies</b> (immunoglobulins)<br>
+• <b>Hormones</b> (insulin, adrenaline)<br>
+• <b>Nutrients</b> (glucose, amino acids)<br>
+• <b>Waste</b> (urea, dissolved CO₂)<br>
+• <b>Ions</b>: Na⁺, K⁺, Ca²⁺`,
+    tags:[{t:'~90% water',c:'#f5c842'},{t:'Transport medium',c:'#f5c842'},{t:'Fibrinogen dissolved',c:'#f5c842'},{t:'Hormones',c:'#f5c842'}]
+  }
+};
+
+const QUIZ = [
+  { q:"Which structural feature of red blood cells allows them to carry more haemoglobin?",
+    opts:["They have a large nucleus","They have no nucleus","They are larger than white blood cells","They produce their own antibodies"],
+    ans:1, fb:"RBCs have no nucleus — this frees up maximum space to be packed with haemoglobin molecules, allowing more oxygen to be transported per cell." },
+  { q:"What is the role of fibrinogen in blood clotting?",
+    opts:["It engulfs pathogens by phagocytosis","It carries oxygen to body cells","It is converted into fibrin by thrombin, forming the clot mesh","It aggregates to form an initial platelet plug"],
+    ans:2, fb:"Fibrinogen is a soluble plasma protein. Thrombin converts it into insoluble fibrin threads that form a meshwork, trapping red blood cells to create the clot." },
+  { q:"Which blood component produces antibodies against specific pathogens?",
+    opts:["Platelets","Red blood cells","Lymphocytes","Phagocytes"],
+    ans:2, fb:"Lymphocytes (a type of white blood cell) produce specific antibodies that bind to particular antigens on pathogens. Phagocytes instead engulf and destroy pathogens directly." },
+  { q:"Approximately what percentage of blood plasma is water?",
+    opts:["55%","70%","90%","45%"],
+    ans:2, fb:"Blood plasma is approximately 90% water. The remaining 10% includes dissolved proteins (fibrinogen, antibodies), hormones, nutrients, and waste products." },
+  { q:"Place these clotting events in the correct order:\n1. Fibrin meshwork forms\n2. Thrombin converts fibrinogen\n3. Platelets aggregate at wound\n4. Vessel wall is damaged",
+    opts:["4 → 3 → 2 → 1","3 → 4 → 1 → 2","4 → 2 → 3 → 1","1 → 2 → 3 → 4"],
+    ans:0, fb:"Correct sequence: vessel damaged → platelets aggregate → thromboplastin + Ca²⁺ activates prothrombin→thrombin → thrombin converts fibrinogen→fibrin → clot forms." },
+  { q:"How does the biconcave disc shape of a red blood cell help it carry out its function?",
+    opts:["It reduces the volume of the cell to save energy","It increases the surface area to volume ratio for faster gas exchange","It helps the cell produce more haemoglobin","It allows the cell to engulf pathogens more easily"],
+    ans:1, fb:"The biconcave disc shape increases the surface area relative to volume, allowing faster diffusion of O₂ and CO₂ across the cell membrane compared to a sphere of equal volume." },
+  { q:"Which substance is converted into thrombin during the clotting cascade?",
+    opts:["Fibrin","Fibrinogen","Prothrombin","Thromboplastin"],
+    ans:2, fb:"Prothrombin is an inactive enzyme precursor found in plasma. Thromboplastin (released by damaged cells and platelets) and Ca²⁺ ions convert prothrombin into the active enzyme thrombin." },
+  { q:"A patient has a very low platelet count (thrombocytopenia). What symptom would you predict?",
+    opts:["Reduced oxygen delivery to cells","Inability to produce antibodies","Prolonged bleeding and difficulty forming clots","Increased risk of bacterial infection"],
+    ans:2, fb:"Platelets initiate clotting by aggregating and triggering the cascade. Too few platelets means clots form slowly or not at all, resulting in prolonged or uncontrolled bleeding." },
+];
+
+const NOTES_DATA = [
+  { col:'#e8334a', title:'Red Blood Cells (Erythrocytes)',
+    body:`<p><b>Function:</b> Transport O₂ as oxyhaemoglobin; also transport CO₂.</p>
+<ul>
+  <li><b>No nucleus</b> — maximises Hb content (~280 million molecules per cell)</li>
+  <li><b>Biconcave disc</b> shape — large surface area:volume ratio for gas exchange</li>
+  <li><b>Flexible membrane</b> — deforms to pass through narrow capillaries</li>
+  <li>Made in <b>red bone marrow</b>; lifespan ~120 days; destroyed in spleen</li>
+  <li>Haemoglobin + O₂ ⇌ Oxyhaemoglobin (reversible, site-dependent)</li>
+</ul>` },
+  { col:'#a8e6cf', title:'White Blood Cells (Leucocytes)',
+    body:`<p><b>Function:</b> Defend the body against pathogens and foreign material.</p>
+<ul>
+  <li><b>Phagocytes</b> — non-specific; engulf &amp; digest pathogens by phagocytosis</li>
+  <li><b>Lymphocytes</b> — specific; produce antibodies complementary to antigens</li>
+  <li>Possess a <b>nucleus</b>; larger than RBCs</li>
+  <li>Can undergo <b>diapedesis</b> (squeeze through capillary walls into tissue)</li>
+  <li>Count increases during infection (<b>leucocytosis</b>); used in diagnosis</li>
+</ul>` },
+  { col:'#f4a261', title:'Platelets (Thrombocytes)',
+    body:`<p><b>Function:</b> Initiate blood clotting to stop bleeding (haemostasis).</p>
+<ul>
+  <li>Cell <b>fragments</b> derived from megakaryocytes in bone marrow — no nucleus</li>
+  <li>Stick to damaged vessel walls and aggregate → temporary <b>platelet plug</b></li>
+  <li>Release chemicals that trigger the clotting cascade (prothrombin → thrombin)</li>
+  <li>Normal count: 150,000–400,000/mm³; lifespan: 5–9 days</li>
+  <li>Too few platelets → thrombocytopenia → excessive bleeding</li>
+</ul>` },
+  { col:'#f5c842', title:'Blood Plasma',
+    body:`<p><b>Composition (~55% of blood volume):</b></p>
+<ul>
+  <li>~90% water (straw-coloured)</li>
+  <li><b>Fibrinogen</b> — soluble clotting protein (liver-produced); dissolved here</li>
+  <li>Antibodies (immunoglobulins) from lymphocytes</li>
+  <li>Hormones (insulin, adrenaline, etc.)</li>
+  <li>Nutrients: glucose, amino acids, fatty acids, vitamins</li>
+  <li>Waste: urea (from liver), dissolved CO₂</li>
+  <li>Mineral ions: Na⁺, K⁺, Ca²⁺ (Ca²⁺ essential for clotting)</li>
+</ul>` },
+  { col:'#c9b8ff', title:'Blood Clotting Cascade (Key for O-Level)',
+    body:`<p><b>Why it matters:</b> Prevents excessive blood loss; stops pathogen entry.</p>
+<ol>
+  <li>Vessel wall damaged</li>
+  <li>Platelets aggregate at wound site → platelet plug</li>
+  <li>Damaged cells + platelets release <b>thromboplastin</b></li>
+  <li>Thromboplastin + Ca²⁺ → <b>Prothrombin → Thrombin</b> (enzyme)</li>
+  <li>Thrombin → <b>Fibrinogen (soluble) → Fibrin (insoluble)</b> threads</li>
+  <li>Fibrin threads form a <b>meshwork</b> trapping RBCs → clot → wound sealed</li>
+</ol>
+<p style="margin-top:0.5rem"><b>Key distinction:</b> Fibrinogen always present in plasma; fibrin only forms during clotting. Fibrinogen = soluble. Fibrin = insoluble.</p>` },
+];
+
+// ── CANVAS STATE ──────────────────────────────────────
+let canvas, ctx, W, H;
+let cells = [], fibrinThreads = [], plasmaParticles = [];
+let clotZone = null, clotPhase = -1, clotTimer = 0;
+let zoom = 1, panX = 0, panY = 0;
+let dragging = false, dragPt = null;
+let simSpeed = 1, t = 0;
+let hovered = null;
+let quizIdx = 0, quizScore = 0, quizDone = false;
+const vis = { rbc:true, wbc:true, platelet:true, fibrin:true, plasma:true };
+
+// ── APP START ─────────────────────────────────────────
+function startApp() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  canvas = document.getElementById('c');
+  ctx = canvas.getContext('2d');
+  resize();
+  window.addEventListener('resize', resize);
+  document.getElementById('spd').addEventListener('input', e => {
+    simSpeed = parseFloat(e.target.value);
+    document.getElementById('speed-val').textContent = simSpeed.toFixed(1) + '×';
+  });
+  canvas.addEventListener('mousemove', onMM);
+  canvas.addEventListener('mousedown', e => { dragging = true; dragPt = {x:e.clientX,y:e.clientY}; });
+  canvas.addEventListener('mouseup', () => { dragging = false; });
+  canvas.addEventListener('mouseleave', () => { dragging = false; hideTT(); });
+  canvas.addEventListener('click', onCK);
+  canvas.addEventListener('wheel', e => { e.preventDefault(); doZoom(e.deltaY > 0 ? 0.9 : 1.1); }, {passive:false});
+  buildToggles();
+  buildQuiz();
+  buildNotes();
+  spawnCells();
+  spawnPlasmaParticles();
+  loop();
+}
+
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  canvas.width = W = r.width; canvas.height = H = r.height;
+}
+
+// ── SPAWN ─────────────────────────────────────────────
+function spawnCells() {
+  cells = [];
+  for (let i=0;i<CFG.rbc.n;i++) cells.push(mkCell('rbc'));
+  for (let i=0;i<CFG.wbc.n;i++) cells.push(mkCell('wbc'));
+  for (let i=0;i<CFG.platelet.n;i++) cells.push(mkCell('platelet'));
+}
+
+function mkCell(type) {
+  const sz = {rbc:13,wbc:19,platelet:5.5}[type];
+  return { type, x:Math.random()*W, y:Math.random()*H,
+    vx:(Math.random()-0.5)*0.75, vy:(Math.random()-0.5)*0.75,
+    r: sz+(Math.random()-0.5)*1.5, phase:Math.random()*Math.PI*2,
+    clotted:false, opacity:1 };
+}
+
+function spawnPlasmaParticles() {
+  plasmaParticles = [];
+  for (let i=0;i<90;i++) {
+    plasmaParticles.push({ x:Math.random()*(W/zoom), y:Math.random()*(H/zoom),
+      r:1.2+Math.random()*2, spd:0.08+Math.random()*0.25, ph:Math.random()*Math.PI*2 });
+  }
+}
+
+// ── LOOP ──────────────────────────────────────────────
+function loop() {
+  t += 0.016 * simSpeed;
+  update();
+  render();
+  requestAnimationFrame(loop);
+}
+
+function update() {
+  cells.forEach(c => {
+    if (c.clotted) return;
+    c.phase += 0.022 * simSpeed;
+    const fx = Math.sin(t*0.28 + c.y*0.007) * 0.38;
+    const fy = Math.cos(t*0.18 + c.x*0.005) * 0.13;
+    c.x += (c.vx + fx) * simSpeed;
+    c.y += (c.vy + fy) * simSpeed;
+    if (c.x < -c.r*2) c.x = W + c.r;
+    if (c.x > W+c.r*2) c.x = -c.r;
+    if (c.y < -c.r*2) c.y = H + c.r;
+    if (c.y > H+c.r*2) c.y = -c.r;
+  });
+  plasmaParticles.forEach(p => {
+    p.ph += 0.018*simSpeed; p.x += p.spd*simSpeed;
+    if (p.x > W/zoom) p.x = 0;
+  });
+  if (clotPhase >= 0) { clotTimer += 0.016*simSpeed; advanceClot(); }
+}
+
+// ── RENDER ────────────────────────────────────────────
+function render() {
+  ctx.clearRect(0,0,W,H);
+  drawBG();
+  ctx.save();
+  ctx.translate(panX,panY);
+  ctx.scale(zoom,zoom);
+  if (vis.plasma) drawPlasma();
+  if (vis.fibrin && fibrinThreads.length) drawFibrin();
+  cells.forEach(c => { if (vis[c.type]) drawCell(c); });
+  if (clotZone) drawClot();
+  ctx.restore();
+}
+
+function drawBG() {
+  const g = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.65);
+  g.addColorStop(0,'#150b0e'); g.addColorStop(1,'#0a0608');
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+  // subtle vessel grid lines
+  for (let y=0;y<H;y+=9) {
+    const a = Math.abs(Math.sin(y/H*Math.PI))*0.055+0.008;
+    ctx.strokeStyle = `rgba(200,40,60,${a})`; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+  // vessel wall vignette
+  const wg1 = ctx.createLinearGradient(0,0,0,H*0.06);
+  wg1.addColorStop(0,'rgba(110,25,40,0.55)'); wg1.addColorStop(1,'transparent');
+  ctx.fillStyle=wg1; ctx.fillRect(0,0,W,H*0.06);
+  const wg2 = ctx.createLinearGradient(0,H*0.94,0,H);
+  wg2.addColorStop(0,'transparent'); wg2.addColorStop(1,'rgba(110,25,40,0.55)');
+  ctx.fillStyle=wg2; ctx.fillRect(0,H*0.94,W,H*0.06);
+}
+
+function drawPlasma() {
+  plasmaParticles.forEach(p => {
+    const a = (Math.sin(p.ph)*0.5+0.5)*0.22;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(245,200,66,${a})`; ctx.fill();
+  });
+}
+
+function drawFibrin() {
+  fibrinThreads.forEach(th => {
+    if (th.opacity <= 0) return;
+    ctx.beginPath(); ctx.moveTo(th.x1,th.y1);
+    ctx.quadraticCurveTo(th.cx,th.cy,th.x2,th.y2);
+    ctx.strokeStyle=`rgba(201,184,255,${th.opacity*0.65})`;
+    ctx.lineWidth=0.8; ctx.setLineDash([3,4]); ctx.stroke(); ctx.setLineDash([]);
+  });
+}
+
+function drawCell(c) {
+  ctx.save(); ctx.globalAlpha=c.opacity;
+  if (c.type==='rbc') drawRBC(c);
+  else if (c.type==='wbc') drawWBC(c);
+  else drawPlt(c);
+  ctx.restore();
+}
+
+function drawRBC(c) {
+  ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.phase*0.08);
+  // outer disc
+  ctx.beginPath(); ctx.ellipse(0,0,c.r,c.r*0.63,0,0,Math.PI*2);
+  ctx.fillStyle = c.clotted ? 'rgba(232,51,74,0.5)' : 'rgba(232,51,74,0.84)'; ctx.fill();
+  // biconcave centre
+  ctx.beginPath(); ctx.ellipse(0,0,c.r*0.46,c.r*0.26,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(155,18,32,0.62)'; ctx.fill();
+  // rim highlight
+  ctx.beginPath(); ctx.ellipse(0,0,c.r,c.r*0.63,0,0,Math.PI*2);
+  ctx.strokeStyle='rgba(255,120,120,0.28)'; ctx.lineWidth=0.7; ctx.stroke();
+  ctx.restore();
+}
+
+function drawWBC(c) {
+  ctx.save(); ctx.translate(c.x,c.y);
+  // amoeboid body
+  ctx.beginPath();
+  const N=10;
+  for (let i=0;i<N;i++) {
+    const ang=(i/N)*Math.PI*2+c.phase*0.04;
+    const rr=c.r*(1+Math.sin(ang*3+c.phase*0.28)*0.14);
+    const x=Math.cos(ang)*rr, y=Math.sin(ang)*rr;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle='rgba(168,230,207,0.19)'; ctx.fill();
+  ctx.strokeStyle='rgba(168,230,207,0.65)'; ctx.lineWidth=0.9; ctx.stroke();
+  // lobed nucleus
+  ctx.beginPath(); ctx.ellipse(-2,0,c.r*0.36,c.r*0.26,c.phase*0.08,0,Math.PI*2);
+  ctx.fillStyle='rgba(168,230,207,0.52)'; ctx.fill();
+  ctx.beginPath(); ctx.ellipse(3,1,c.r*0.24,c.r*0.2,-0.4,0,Math.PI*2);
+  ctx.fillStyle='rgba(168,230,207,0.38)'; ctx.fill();
+  ctx.restore();
+}
+
+function drawPlt(c) {
+  ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.phase*0.18);
+  ctx.beginPath(); ctx.ellipse(0,0,c.r*1.4,c.r*0.75,0,0,Math.PI*2);
+  ctx.fillStyle=c.clotted?'rgba(244,162,97,0.92)':'rgba(244,162,97,0.72)'; ctx.fill();
+  ctx.strokeStyle='rgba(244,162,97,0.45)'; ctx.lineWidth=0.6; ctx.stroke();
+  ctx.restore();
+}
+
+function drawClot() {
+  const {x,y}=clotZone, r=68;
+  const prog=Math.min(Math.max(clotPhase,0)/5,1);
+  // damage glow
+  const g=ctx.createRadialGradient(x,y,0,x,y,r);
+  g.addColorStop(0,`rgba(232,51,74,${0.14*prog})`); g.addColorStop(1,'transparent');
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+  // fibrin clot overlay
+  if (clotPhase>=4) {
+    ctx.beginPath(); ctx.arc(x,y,r*0.58*prog,0,Math.PI*2);
+    ctx.fillStyle=`rgba(201,184,255,${0.16*prog})`; ctx.fill();
+    ctx.strokeStyle=`rgba(201,184,255,${0.42*prog})`; ctx.lineWidth=1.4;
+    ctx.setLineDash([2,4]); ctx.stroke(); ctx.setLineDash([]);
+  }
+  // label
+  if (clotPhase < 2) {
+    ctx.save(); ctx.fillStyle='rgba(232,51,74,0.85)';
+    ctx.font='700 11px Space Mono, monospace'; ctx.textAlign='center';
+    ctx.fillText('⚡ VESSEL INJURED', x, y-58); ctx.restore();
+  } else if (clotPhase>=5) {
+    ctx.save(); ctx.fillStyle='rgba(201,184,255,0.75)';
+    ctx.font='700 11px Space Mono, monospace'; ctx.textAlign='center';
+    ctx.fillText('✓ CLOT FORMED', x, y-58); ctx.restore();
+  }
+}
+
+// ── CLOTTING ──────────────────────────────────────────
+function triggerClot() {
+  if (clotPhase>=0 && clotPhase<6) return;
+  fibrinThreads=[]; clotPhase=0; clotTimer=0;
+  cells.forEach(c=>{c.clotted=false;c.vx=(Math.random()-0.5)*0.75;c.vy=(Math.random()-0.5)*0.75;c.opacity=1;});
+  document.querySelectorAll('.cs').forEach(el=>el.classList.remove('done'));
+  clotZone={x:(W/zoom)*0.5,y:(H/zoom)*0.5};
+  const btn=document.getElementById('clot-btn');
+  btn.textContent='⏳ Clotting in progress...'; btn.disabled=true;
+  markStep(0);
+}
+
+function advanceClot() {
+  if (clotPhase===1&&clotTimer>1.5) { clotPhase=2;clotTimer=0;markStep(1);movePlatelets(); }
+  if (clotPhase===2&&clotTimer>1.8) { clotPhase=3;clotTimer=0;markStep(2); }
+  if (clotPhase===3&&clotTimer>1.8) { clotPhase=4;clotTimer=0;markStep(3);spawnFibrin(); }
+  if (clotPhase===4&&clotTimer>2.2) { clotPhase=5;clotTimer=0;markStep(4);trapRBCs(); }
+  if (clotPhase===5&&clotTimer>2)   { clotPhase=6;markStep(5);finishClot(); }
+}
+
+function markStep(i) { const el=document.getElementById('cs'+i); if(el)el.classList.add('done'); }
+
+function movePlatelets() {
+  cells.filter(c=>c.type==='platelet').slice(0,12).forEach((c,i)=>{
+    setTimeout(()=>{
+      if(!clotZone)return;
+      const ang=(i/12)*Math.PI*2, dist=22+Math.random()*32;
+      c.vx=(clotZone.x+Math.cos(ang)*dist-c.x)*0.014;
+      c.vy=(clotZone.y+Math.sin(ang)*dist-c.y)*0.014;
+      c.clotted=true;
+    },i*140);
+  });
+}
+
+function spawnFibrin() {
+  if(!clotZone)return;
+  const {x,y}=clotZone;
+  for(let i=0;i<22;i++){
+    const a1=Math.random()*Math.PI*2, a2=a1+(Math.random()-0.5)*1.6;
+    const r1=8+Math.random()*58, r2=8+Math.random()*58;
+    fibrinThreads.push({ x1:x+Math.cos(a1)*r1,y1:y+Math.sin(a1)*r1,
+      x2:x+Math.cos(a2)*r2,y2:y+Math.sin(a2)*r2,
+      cx:x+(Math.random()-0.5)*45,cy:y+(Math.random()-0.5)*45,opacity:0});
+  }
+  let fi=0;
+  const fi2=setInterval(()=>{ fibrinThreads.forEach(th=>th.opacity=Math.min(th.opacity+0.05,1)); if(++fi>20)clearInterval(fi2); },55);
+}
+
+function trapRBCs() {
+  if(!clotZone)return;
+  cells.forEach(c=>{
+    if(c.type!=='rbc')return;
+    const dx=c.x-clotZone.x,dy=c.y-clotZone.y;
+    if(dx*dx+dy*dy<62*62){c.clotted=true;c.vx*=0.08;c.vy*=0.08;}
+  });
+}
+
+function finishClot() {
+  const btn=document.getElementById('clot-btn');
+  btn.textContent='🔄 Reset Simulation'; btn.disabled=false; btn.onclick=resetClot;
+}
+
+function resetClot() {
+  fibrinThreads=[]; clotZone=null; clotPhase=-1; clotTimer=0;
+  cells.forEach(c=>{c.clotted=false;c.vx=(Math.random()-0.5)*0.75;c.vy=(Math.random()-0.5)*0.75;c.opacity=1;});
+  document.querySelectorAll('.cs').forEach(el=>el.classList.remove('done'));
+  const btn=document.getElementById('clot-btn');
+  btn.textContent='⚡ Trigger Vessel Injury'; btn.disabled=false; btn.onclick=triggerClot;
+}
+
+// ── INTERACTION ───────────────────────────────────────
+function simCoords(e) {
+  const r=canvas.getBoundingClientRect();
+  return {sx:(e.clientX-r.left-panX)/zoom, sy:(e.clientY-r.top-panY)/zoom};
+}
+
+function onMM(e) {
+  if(dragging&&dragPt){ panX+=e.clientX-dragPt.x; panY+=e.clientY-dragPt.y; dragPt={x:e.clientX,y:e.clientY}; return; }
+  const {sx,sy}=simCoords(e); hovered=null;
+  for(let i=cells.length-1;i>=0;i--){
+    const c=cells[i]; if(!vis[c.type])continue;
+    const dx=sx-c.x,dy=sy-c.y;
+    if(dx*dx+dy*dy<(c.r+5)*(c.r+5)){hovered=c;break;}
+  }
+  const tt=document.getElementById('tt');
+  if(hovered){
+    const r=canvas.getBoundingClientRect();
+    tt.textContent=CFG[hovered.type].label;
+    tt.style.left=(e.clientX-r.left+12)+'px';
+    tt.style.top=(e.clientY-r.top-10)+'px';
+    tt.classList.add('show'); canvas.style.cursor='pointer';
+  } else { hideTT(); canvas.style.cursor=dragging?'grabbing':'grab'; }
+}
+
+function hideTT() { document.getElementById('tt').classList.remove('show'); }
+
+function onCK() { if(hovered) showInfo(hovered.type); }
+
+function doZoom(f) { zoom=Math.max(0.25,Math.min(5,zoom*f)); }
+function resetView() { zoom=1;panX=0;panY=0; }
+
+// ── INFO PANEL ────────────────────────────────────────
+function showInfo(type) {
+  const d=INFO[type];
+  document.getElementById('info-title').textContent=d.title;
+  document.getElementById('info-body').innerHTML=d.body;
+  const te=document.getElementById('info-tags'); te.innerHTML='';
+  d.tags.forEach(tag=>{
+    const s=document.createElement('span'); s.className='i-tag';
+    s.textContent=tag.t;
+    s.style.cssText=`border-color:${tag.c}55;color:${tag.c};background:${tag.c}18`;
+    te.appendChild(s);
+  });
+  document.querySelectorAll('.tog-row').forEach(r=>r.classList.toggle('selected',r.dataset.type===type));
+}
+
+// ── TOGGLES ───────────────────────────────────────────
+function buildToggles() {
+  const list=document.getElementById('tog-list');
+  ['rbc','wbc','platelet','plasma','fibrin'].forEach(type=>{
+    const cfg=CFG[type];
+    const row=document.createElement('div'); row.className='tog-row'; row.dataset.type=type;
+    row.style.setProperty('--sel-border',cfg.bCol); row.style.setProperty('--sel-bg',cfg.dimCol);
+    row.style.setProperty('--sw-color',cfg.col);
+    row.innerHTML=`<div class="tog-dot" style="background:${cfg.col}"></div>
+<span class="tog-name" style="color:${cfg.col}">${cfg.label}</span>
+${cfg.n?`<span class="tog-ct">${cfg.n}</span>`:''}
+<div class="tog-sw on" id="sw-${type}"></div>`;
+    row.addEventListener('click',()=>{
+      vis[type]=!vis[type];
+      document.getElementById('sw-'+type).classList.toggle('on',vis[type]);
+      showInfo(type);
+    });
+    list.appendChild(row);
+  });
+}
+
+// ── QUIZ ──────────────────────────────────────────────
+function buildQuiz() { renderQ(0); }
+
+function renderQ(idx) {
+  quizIdx=idx; quizDone=false;
+  const q=QUIZ[idx];
+  document.getElementById('quiz-inner').innerHTML=`
+<div class="q-header">Question ${idx+1} / ${QUIZ.length} · G3 Pure Biology · Blood Components</div>
+<div class="q-text">${q.q.replace(/\n/g,'<br>')}</div>
+<div class="q-opts">
+  ${q.opts.map((o,i)=>`<button class="q-opt" data-i="${i}" onclick="ansQ(${i})">${'ABCD'[i]}. ${o}</button>`).join('')}
+</div>
+<div class="q-fb" id="qfb"></div>
+<div class="q-nav">
+  <button onclick="renderQ(${Math.max(0,idx-1)})" ${idx===0?'disabled':''}>← Prev</button>
+  <span class="q-score" id="qscore">Score: ${quizScore} / ${QUIZ.length}</span>
+  <button onclick="renderQ(${Math.min(QUIZ.length-1,idx+1)})" ${idx===QUIZ.length-1?'disabled':''}>Next →</button>
+</div>`;
+}
+
+function ansQ(chosen) {
+  if(quizDone)return; quizDone=true;
+  const q=QUIZ[quizIdx];
+  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.q-opt')[q.ans].classList.add('correct');
+  if(chosen!==q.ans) document.querySelectorAll('.q-opt')[chosen].classList.add('wrong');
+  else quizScore++;
+  const fb=document.getElementById('qfb');
+  fb.innerHTML=(chosen===q.ans?'✓ Correct! ':'✗ Incorrect. ')+q.fb;
+  fb.classList.add('show'); if(chosen===q.ans)fb.classList.add('ok');
+  document.getElementById('qscore').textContent='Score: '+quizScore+' / '+QUIZ.length;
+}
+
+// ── NOTES ─────────────────────────────────────────────
+function buildNotes() {
+  const el=document.getElementById('notes-inner');
+  el.innerHTML=`<p style="font-family:var(--font-mono);font-size:0.67rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;padding:1rem 0 0.25rem;border-bottom:1px solid var(--border);margin-bottom:0">Revision Notes · G3 O-Level Pure Biology · Transport in Humans</p>`;
+  NOTES_DATA.forEach(n=>{
+    el.innerHTML+=`<div class="n-card"><h4 style="color:${n.col}">${n.title}</h4>${n.body}</div>`;
+  });
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.pview').forEach(v=>v.classList.toggle('active',v.id===tab+'-tab'));
+  if(tab==='sim') resize();
+}
+
+// kick off clotPhase advance on first frame
+setInterval(()=>{ if(clotPhase===0){clotPhase=1;clotTimer=0;} },800);
+</script>
+</body>
 </html>
