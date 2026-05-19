@@ -7,9 +7,9 @@
   <body>
     <a-scene>
       
-      <a-sky color="#2b0202"></a-sky>
+      <a-sky color="#080c14"></a-sky>
 
-      <a-cylinder radius="6" height="60" rotation="90 0 0" position="0 0 -15" color="#3d0505" side="double" open-ended="true"></a-cylinder>
+      <a-cylinder radius="6" height="60" rotation="90 0 0" position="0 0 -15" color="#5c0d0d" side="double" open-ended="true"></a-cylinder>
 
       <a-entity id="woundZone">
         <a-circle color="#1a0000" radius="1.2" scale="1.5 0.8 1" position="0 -5.9 -15" rotation="-90 0 0"></a-circle>
@@ -27,20 +27,38 @@
 
       <a-plane color="#111" width="2.5" height="3.2" position="-3.5 2.2 -4" rotation="0 35 0" opacity="0.9" transparent="true">
         <a-text value="SIMULATION LEGEND" align="center" color="#fff" width="4.5" position="0 1.3 0.01"></a-text>
-        <a-text value="[Red Disc] Red Blood Cell\n[White/Lobed] Phagocyte\n[White/Round] Lymphocyte\n[Yellow] Platelet\n[Cyan Sphere] Plasma Nutrients\n[White Y-Shape] Antibody\n[Grey Grid] Fibrin Mesh" 
+        <a-text value="[Biconcave Disc] Red Blood Cell\n[White/Lobed] Phagocyte\n[White/Round] Lymphocyte\n[Spiky Gold] Platelet (Clotting)\n[Cyan Sphere] Plasma Nutrients\n[White Y-Shape] Antibody\n[Grey Grid] Fibrin Mesh" 
                 align="left" color="#ddd" width="3.2" position="-1.1 0 0.01"></a-text>
       </a-plane>
 
       <a-entity animation="property: position; from: 0 0 -25; to: 0 0 15; dur: 12000; loop: true; easing: linear">
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="2 1.2 -2" rotation="30 10 40"></a-torus>
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="-2.5 3 -5" rotation="10 70 20"></a-torus>
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="1.8 4 -8" rotation="80 20 10"></a-torus>
-        <a-dodecahedron color="#ffcc00" radius="0.08" position="-1 2 -4"></a-dodecahedron>
+        
+        <a-entity position="2 1.2 -2" rotation="30 10 40">
+          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        </a-entity>
+
+        <a-entity position="-2.5 3 -5" rotation="10 70 20">
+          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        </a-entity>
+
+        <a-entity position="1.8 4 -8" rotation="80 20 10">
+          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        </a-entity>
+
+        <a-icosahedron color="#ffb300" radius="0.12" position="-1 2 -4" rotation="15 35 45"></a-icosahedron>
+        <a-icosahedron color="#ffa000" radius="0.10" position="1.2 1.8 -6" rotation="45 10 75"></a-icosahedron>
       </a-entity>
 
       <a-entity position="0 4 -5" animation="property: position; from: -4 4 -15; to: 4 4 -5; dur: 10000; loop: true; easing: linear">
-        <a-torus radius="0.4" tube="0.12" scale="1 1 0.4" color="#400000"
-                 animation="property: material.color; type: color; from: #400000; to: #ff1111; dur: 5000; loop: true; dir: alternate"></a-torus>
+        <a-entity rotation="0 45 30">
+          <a-torus radius="0.4" tube="0.14" scale="1 1 0.4" color="#400000"
+                   animation="property: material.color; type: color; from: #4a0000; to: #ff2222; dur: 5000; loop: true; dir: alternate"></a-torus>
+          <a-sphere radius="0.32" scale="1 1 0.15" color="#400000"
+                   animation="property: material.color; type: color; from: #330000; to: #cc1111; dur: 5000; loop: true; dir: alternate"></a-sphere>
+        </a-entity>
       </a-entity>
       <a-text value="Oxygenation Shift Zone" position="0 4.7 -7" align="center" width="3" color="#fff"></a-text>
 
@@ -91,9 +109,19 @@
         <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="0 0 -45" opacity="0" transparent="true" animation="property: material.opacity; from: 0; to: 0.8; dur: 6000; loop: true; dir: alternate"></a-cylinder>
         <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="45 90 0" opacity="0" transparent="true" animation="property: material.opacity; from: 0; to: 0.8; dur: 6000; loop: true; dir: alternate"></a-cylinder>
         
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="0.3 0.2 0" rotation="40 20 10"></a-torus>
-        <a-torus color="#990000" radius="0.4" tube="0.12" scale="1 1 0.4" position="-0.4 -0.5 0.1" rotation="10 80 45"></a-torus>
-        <a-dodecahedron color="#ffcc00" radius="0.08" position="0 0.6 0.2" scale="1.5 1.5 1.5"></a-dodecahedron>
+        <a-entity position="0.3 0.2 0" rotation="40 20 10">
+          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        </a-entity>
+
+        <a-entity position="-0.4 -0.5 0.1" rotation="10 80 45">
+          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        </a-entity>
+
+        <a-icosahedron color="#ffb300" radius="0.12" position="0 0.6 0.2" rotation="20 45 10"></a-icosahedron>
+        <a-icosahedron color="#ffa000" radius="0.09" position="-0.2 0.3 -0.2" rotation="10 15 80"></a-icosahedron>
+
         <a-text value="Fibrin Mesh Clot Formation" position="0 2.5 0" align="center" width="4" color="#fff"></a-text>
       </a-entity>
 
