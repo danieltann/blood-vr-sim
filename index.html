@@ -1,151 +1,144 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>O-Level G3 Biology: Advanced Blood & Clotting VR</title>
+    <title>O-Level Biology: Focused Morphology & Clotting VR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script>
+      // Component to ensure all quiz buttons behave identically on gaze
+      AFRAME.registerComponent('quiz-option', {
+        init: function () {
+          var el = this.el;
+          el.addEventListener('mouseenter', function () {
+            // Uniform 'hover' effect for all options
+            this.setAttribute('material', 'color', '#ffb700'); 
+          });
+          el.addEventListener('mouseleave', function () {
+            // Restore uniform 'inactive' state for all options
+            this.setAttribute('material', 'color', '#2c3e50');
+          });
+          el.addEventListener('click', function () {
+            // Optional: Provide feedback only on correct answer (Option B)
+            if (el.id === 'optionB') {
+                document.querySelector('#quizFeedback').setAttribute('text', 'value: CORRECT! Platelets turn spiky upon activation.');
+                document.querySelector('#quizFeedback').setAttribute('text', 'color', '#2ecc71');
+            } else {
+                document.querySelector('#quizFeedback').setAttribute('text', 'value: INCORRECT. Try Again.');
+                document.querySelector('#quizFeedback').setAttribute('text', 'color', '#e74c3c');
+            }
+          });
+        }
+      });
+    </script>
   </head>
   <body>
     <a-scene>
       
-      <a-sky color="#080c14"></a-sky>
+      <a-sky color="#05080d"></a-sky> <a-cylinder radius="6" height="60" rotation="90 0 0" position="0 0 -15" color="#5c0000" side="double" open-ended="true"></a-cylinder>
 
-      <a-cylinder radius="6" height="60" rotation="90 0 0" position="0 0 -15" color="#5c0d0d" side="double" open-ended="true"></a-cylinder>
+      <a-circle color="#1a0000" radius="1.3" scale="1.5 0.8 1" position="0 -5.9 -15" rotation="-90 0 0"></a-circle>
 
-      <a-entity id="woundZone">
-        <a-circle color="#1a0000" radius="1.2" scale="1.5 0.8 1" position="0 -5.9 -15" rotation="-90 0 0"></a-circle>
-        
-        <a-sphere color="#22aa22" scale="0.1 0.3 0.1" position="0.2 -5.5 -15" rotation="20 45 10"></a-sphere>
-        <a-sphere color="#22aa22" scale="0.1 0.3 0.1" position="-0.3 -5.6 -14.8" rotation="10 -30 40"></a-sphere>
-      </a-entity>
-
-      <a-entity animation="property: position; from: 0 0 -10; to: 0 0 10; dur: 8000; loop: true; easing: linear">
-        <a-sphere color="#b2ebf2" radius="0.04" opacity="0.6" transparent="true" position="-1 2 -3"></a-sphere>
-        <a-sphere color="#b2ebf2" radius="0.04" opacity="0.6" transparent="true" position="2 4 -5"></a-sphere>
-        <a-sphere color="#b2ebf2" radius="0.04" opacity="0.6" transparent="true" position="-2 1 -6"></a-sphere>
-        <a-sphere color="#b2ebf2" radius="0.04" opacity="0.6" transparent="true" position="1.5 3 -2"></a-sphere>
-      </a-entity>
-
-      <a-plane color="#111" width="2.5" height="3.2" position="-3.5 2.2 -4" rotation="0 35 0" opacity="0.9" transparent="true">
-        <a-text value="SIMULATION LEGEND" align="center" color="#fff" width="4.5" position="0 1.3 0.01"></a-text>
-        <a-text value="[Biconcave Disc] Red Blood Cell\n[White/Lobed] Phagocyte\n[White/Round] Lymphocyte\n[Spiky Gold] Platelet (Clotting)\n[Cyan Sphere] Plasma Nutrients\n[White Y-Shape] Antibody\n[Grey Grid] Fibrin Mesh" 
-                align="left" color="#ddd" width="3.2" position="-1.1 0 0.01"></a-text>
+      <a-plane color="#0b132b" width="2.6" height="3.4" position="-3.6 2.0 -4.5" rotation="0 35 0" opacity="0.95" transparent="true">
+        <a-text value="G3 MORPHOLOGY GUIDE" align="center" color="#f1c40f" width="4.5" position="0 1.4 0.01"></a-text>
+        <a-text value="• RED BLOOD CELL\n  Biconcave disc, no nucleus.\n  Shape maximizes Surface Area\n  for faster diffusion.\n\n• WHITE BLOOD CELLS\n  Defense cells with nuclei.\n  Phagocyte: Lobed.\n  Lymphocyte: Large/Round.\n\n• PLATELETS (Thrombocytes)\n  Fragments that transform\n  visibly during clotting." 
+                align="left" color="#ecf0f1" width="3.0" position="-1.2 0 0.01"></a-text>
       </a-plane>
 
-      <a-entity animation="property: position; from: 0 0 -25; to: 0 0 15; dur: 12000; loop: true; easing: linear">
+      <a-entity animation="property: position; from: 0 0 -30; to: 0 0 20; dur: 16000; loop: true; easing: linear">
         
-        <a-entity position="2 1.2 -2" rotation="30 10 40">
-          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
-          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        <a-entity position="2 1.2 -3" rotation="30 10 40">
+          <a-torus color="#cc0000" radius="0.4" tube="0.12" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#7f0000" radius="0.30" scale="1 1 0.15"></a-sphere>
+        </a-entity>
+        <a-entity position="-2.5 3.0 -6" rotation="10 70 20">
+          <a-torus color="#cc0000" radius="0.4" tube="0.12" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#7f0000" radius="0.30" scale="1 1 0.15"></a-sphere>
+        </a-entity>
+        <a-entity position="0.8 4.0 -9" rotation="80 20 10">
+          <a-torus color="#cc0000" radius="0.4" tube="0.12" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#7f0000" radius="0.30" scale="1 1 0.15"></a-sphere>
+        </a-entity>
+        <a-entity position="-1.5 0.8 -12" rotation="45 45 80">
+          <a-torus color="#cc0000" radius="0.4" tube="0.12" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#7f0000" radius="0.30" scale="1 1 0.15"></a-sphere>
         </a-entity>
 
-        <a-entity position="-2.5 3 -5" rotation="10 70 20">
-          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
-          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        <a-entity position="-2.2 1.8 -8" scale="0.9 0.9 0.9">
+          <a-sphere radius="1" color="#ffffff" opacity="0.4" transparent="true">
+            <a-sphere radius="0.25" color="#2a004a" position="0.2 0.1 0"></a-sphere>
+            <a-sphere radius="0.23" color="#2a004a" position="-0.1 -0.2 0.1"></a-sphere>
+            <a-sphere radius="0.20" color="#2a004a" position="-0.1 0.2 -0.1"></a-sphere>
+          </a-sphere>
         </a-entity>
 
-        <a-entity position="1.8 4 -8" rotation="80 20 10">
-          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
-          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        <a-entity position="2.2 2.2 -10" scale="0.85 0.85 0.85">
+          <a-sphere radius="1" color="#ffffff" opacity="0.4" transparent="true">
+            <a-sphere radius="0.65" color="#000033" position="0 0 0"></a-sphere>
+          </a-sphere>
         </a-entity>
 
-        <a-icosahedron color="#ffb300" radius="0.12" position="-1 2 -4" rotation="15 35 45"></a-icosahedron>
-        <a-icosahedron color="#ffa000" radius="0.10" position="1.2 1.8 -6" rotation="45 10 75"></a-icosahedron>
-      </a-entity>
-
-      <a-entity position="0 4 -5" animation="property: position; from: -4 4 -15; to: 4 4 -5; dur: 10000; loop: true; easing: linear">
-        <a-entity rotation="0 45 30">
-          <a-torus radius="0.4" tube="0.14" scale="1 1 0.4" color="#400000"
-                   animation="property: material.color; type: color; from: #4a0000; to: #ff2222; dur: 5000; loop: true; dir: alternate"></a-torus>
-          <a-sphere radius="0.32" scale="1 1 0.15" color="#400000"
-                   animation="property: material.color; type: color; from: #330000; to: #cc1111; dur: 5000; loop: true; dir: alternate"></a-sphere>
-        </a-entity>
-      </a-entity>
-      <a-text value="Oxygenation Shift Zone" position="0 4.7 -7" align="center" width="3" color="#fff"></a-text>
-
-      <a-entity position="-3.5 2 -8">
-        <a-sphere radius="0.9" color="#ffffff" opacity="0.5" transparent="true">
-          <a-sphere radius="0.65" color="#000044" position="0 0 0"></a-sphere>
-        </a-sphere>
-        <a-text value="Lymphocyte" position="0 1.2 0" align="center" width="3.5" color="#fff"></a-text>
-        
-        <a-entity position="0.5 0.5 1" rotation="10 20 0">
-          <a-cylinder color="#ffffff" radius="0.015" height="0.15" position="0 0 0"></a-cylinder>
-          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="0.04 0.09 0" rotation="0 0 -45"></a-cylinder>
-          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="-0.04 0.09 0" rotation="0 0 45"></a-cylinder>
-        </a-entity>
-
-        <a-entity position="0.8 -0.2 1.5" rotation="45 45 10">
-          <a-cylinder color="#ffffff" radius="0.015" height="0.15" position="0 0 0"></a-cylinder>
-          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="0.04 0.09 0" rotation="0 0 -45"></a-cylinder>
-          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="-0.04 0.09 0" rotation="0 0 45"></a-cylinder>
-        </a-entity>
-
-        <a-entity position="2 0.5 0">
-          <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="0 0 0"></a-sphere>
-          <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="0.15 0.1 0.05" rotation="30 45 0"></a-sphere>
-          <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="-0.1 0.1 -0.05" rotation="-20 10 30"></a-sphere>
-          
-          <a-entity position="0.05 0.05 0" rotation="0 45 30">
-            <a-cylinder color="#ffffff" radius="0.012" height="0.12" position="0 0 0"></a-cylinder>
-            <a-cylinder color="#ffffff" radius="0.012" height="0.08" position="0.03 0.07 0" rotation="0 0 -45"></a-cylinder>
-            <a-cylinder color="#ffffff" radius="0.012" height="0.08" position="-0.03 0.07 0" rotation="0 0 45"></a-cylinder>
-          </a-entity>
-          
-          <a-text value="Agglutination" position="0 -0.4 0" align="center" width="2.5" color="#fff"></a-text>
-        </a-entity>
-      </a-entity>
-
-      <a-entity position="3.5 2 -8">
-        <a-sphere radius="1" color="#ffffff" opacity="0.5" transparent="true">
-          <a-sphere radius="0.25" color="#3a005c" position="0.2 0.1 0"></a-sphere>
-          <a-sphere radius="0.23" color="#3a005c" position="-0.1 -0.2 0.1"></a-sphere>
-          <a-sphere radius="0.2" color="#3a005c" position="-0.1 0.2 -0.1"></a-sphere>
-        </a-sphere>
-        <a-text value="Phagocyte" position="0 1.2 0" align="center" width="3.5" color="#fff"></a-text>
+        <a-octahedron color="#ffb300" radius="0.08" position="-0.8 2.2 -4" rotation="10 20 30"></a-octahedron>
+        <a-octahedron color="#ffa000" radius="0.07" position="1.4 1.5 -7" rotation="40 50 10"></a-octahedron>
+        <a-octahedron color="#ffb300" radius="0.08" position="-1.5 3.8 -14" rotation="5 80 45"></a-octahedron>
       </a-entity>
 
       <a-entity position="0 1.6 -12">
-        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="0 0 45" opacity="0" transparent="true" animation="property: material.opacity; from: 0; to: 0.8; dur: 6000; loop: true; dir: alternate"></a-cylinder>
-        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="0 0 -45" opacity="0" transparent="true" animation="property: material.opacity; from: 0; to: 0.8; dur: 6000; loop: true; dir: alternate"></a-cylinder>
-        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="45 90 0" opacity="0" transparent="true" animation="property: material.opacity; from: 0; to: 0.8; dur: 6000; loop: true; dir: alternate"></a-cylinder>
+        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="0 0 45" opacity="0.8" transparent="true"></a-cylinder>
+        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="0 0 -45" opacity="0.8" transparent="true"></a-cylinder>
+        <a-cylinder color="#cccccc" height="6" radius="0.02" rotation="45 90 0" opacity="0.8" transparent="true"></a-cylinder>
         
-        <a-entity position="0.3 0.2 0" rotation="40 20 10">
-          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
-          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+        <a-entity position="0.3 0.1 0" rotation="40 20 10">
+          <a-torus color="#b30000" radius="0.4" tube="0.12" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#660000" radius="0.30" scale="1 1 0.15"></a-sphere>
         </a-entity>
-
         <a-entity position="-0.4 -0.5 0.1" rotation="10 80 45">
-          <a-torus color="#cc0000" radius="0.4" tube="0.14" scale="1 1 0.4"></a-torus>
-          <a-sphere color="#990000" radius="0.32" scale="1 1 0.15"></a-sphere>
+          <a-torus color="#b30000" radius="0.4" tube="0.12" scale="1 1 0.4"></a-torus>
+          <a-sphere color="#660000" radius="0.30" scale="1 1 0.15"></a-sphere>
         </a-entity>
 
-        <a-icosahedron color="#ffb300" radius="0.12" position="0 0.6 0.2" rotation="20 45 10"></a-icosahedron>
-        <a-icosahedron color="#ffa000" radius="0.09" position="-0.2 0.3 -0.2" rotation="10 15 80"></a-icosahedron>
+        <a-entity position="0.2 0.6 0.2" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 8000; loop: true; easing: linear">
+            <a-icosahedron color="#ff9f43" radius="0.18" rotation="0 0 0" scale="1 1.5 1"></a-icosahedron>
+            <a-icosahedron color="#ff9f43" radius="0.18" rotation="90 0 45" scale="1 1.5 1"></a-icosahedron>
+            <a-icosahedron color="#ff9f43" radius="0.18" rotation="45 90 90" scale="1 1.5 1"></a-icosahedron>
+        </a-entity>
+        
+        <a-entity position="-0.3 0.3 -0.2" animation="property: rotation; from: 0 0 0; to: 360 0 360; dur: 6000; loop: true; easing: linear">
+            <a-icosahedron color="#ff6b6b" radius="0.16" rotation="0 0 0" scale="1 1.5 1"></a-icosahedron>
+            <a-icosahedron color="#ff6b6b" radius="0.16" rotation="45 45 45" scale="1 1.5 1"></a-icosahedron>
+        </a-entity>
 
-        <a-text value="Fibrin Mesh Clot Formation" position="0 2.5 0" align="center" width="4" color="#fff"></a-text>
+        <a-text value="Platelet Clot Response" position="0 2.2 0" align="center" width="4.5" color="#ffffff"></a-text>
       </a-entity>
 
       <a-entity position="0 1.8 -18">
-        <a-plane color="#333" width="4" height="2.2" opacity="0.95" transparent="true">
-          <a-text value="O-LEVEL REVISION CHECK" align="center" color="#ffcc00" width="5" position="0 0.8 0.01"></a-text>
-          <a-text value="Question: Which component forms the structural mesh network\nresponsible for trapping cells during blood clotting?\n\n[Gaze at your choice to check answer]\n   A) Plasma Proteins      B) Fibrin Threads      C) Phagocytes" 
-                  align="center" color="#fff" width="3.5" position="0 -0.1 0.01"></a-text>
+        <a-plane color="#111" width="4.5" height="2.2" opacity="0.95" transparent="true">
+          <a-text value="G3 MORPHOLOGY QUIZ" align="center" color="#f1c40f" width="5" position="0 0.8 0.01"></a-text>
+          <a-text value="Question: How does the morphology of a platelet change during\nthe clotting response to a blood vessel injury?\n\n[Gaze at your selection to submit answer]" 
+                  align="center" color="#ffffff" width="3.6" position="0 0.1 0.01"></a-text>
         </a-plane>
         
-        <a-box position="0.5 -0.6 0.05" width="1.2" height="0.25" depth="0.1" color="#444"
-               animation__hover="property: material.color; type: color; to: #22aa22; startEvents: click">
-               <a-text value="B) Fibrin" align="center" position="0 0 0.06" width="3" color="#fff"></a-text>
-        </a-box>
+        <a-entity id="optionBZone" position="0.8 -0.6 0.05">
+            <a-box id="optionB" quiz-option width="1.6" height="0.25" depth="0.1" color="#2c3e50">
+                <a-text value="Turn Spiky" align="center" position="0 0 0.06" width="3.2" color="#fff"></a-text>
+            </a-box>
+        </a-entity>
+        
+        <a-entity id="optionAZone" position="-0.8 -0.6 0.05">
+            <a-box id="optionA" quiz-option width="1.6" height="0.25" depth="0.1" color="#2c3e50">
+                <a-text value="Turn Flat" align="center" position="0 0 0.06" width="3.2" color="#fff"></a-text>
+            </a-box>
+        </a-entity>
+
+        <a-text id="quizFeedback" value="" align="center" width="4" position="0 -1 0"></a-text>
       </a-entity>
 
-      <a-entity id="cameraRig" animation="property: position; from: 0 12 5; to: 0 1.6 0; dur: 5000; easing: easeOutQuad">
+      <a-entity id="cameraRig" position="0 1.6 0">
         <a-entity camera look-controls wasd-controls>
           <a-cursor color="#ffffff" raycaster="objects: a-box" fuse="true" fuse-timeout="1500"></a-cursor>
         </a-entity>
       </a-entity>
 
-      <a-light type="ambient" intensity="0.6" color="#ffffff"></a-light>
-      <a-light type="directional" intensity="0.5" position="2 4 3"></a-light>
+      <a-light type="ambient" intensity="0.65" color="#ffffff"></a-light>
+      <a-light type="directional" intensity="0.55" position="2 5 3"></a-light>
 
     </a-scene>
   </body>
