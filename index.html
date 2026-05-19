@@ -4,7 +4,7 @@
     <title>O-Level Biology: Core Blood Components & Clotting VR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script>
-      // 1. HOVER-TO-PAUSE AND IDENTIFY COMPONENT
+      // 1. INSTANT-FREEZE & IDENTIFY COMPONENT
       AFRAME.registerComponent('gaze-interact', {
         schema: {
           label: {type: 'string', default: 'Blood Component'}
@@ -12,36 +12,27 @@
         init: function () {
           var el = this.el;
           var data = this.data;
-          this.gazeTimer = null;
 
-          // Dynamically create a text identification label above the component
+          // Dynamically construct the text identification label above the entity
           this.labelElement = document.createElement('a-text');
           this.labelElement.setAttribute('value', data.label);
           this.labelElement.setAttribute('align', 'center');
           this.labelElement.setAttribute('color', '#00ffff');
           this.labelElement.setAttribute('width', '5');
-          this.labelElement.setAttribute('position', '0 1.3 0');
+          this.labelElement.setAttribute('position', '0 1.5 0');
           this.labelElement.setAttribute('visible', 'false');
           el.appendChild(this.labelElement);
 
-          // Triggered when cursor rests on the item
+          // Instantly freeze and display label when cursor enters the boundary box
           el.addEventListener('mouseenter', () => {
-            this.gazeTimer = setTimeout(() => {
-              // Freeze this specific object's animation component after 2 seconds
-              if (el.components.animation) {
-                el.components.animation.pause();
-              }
-              // Display the floating identification tag
-              this.labelElement.setAttribute('visible', 'true');
-            }, 2000);
+            if (el.components.animation) {
+              el.components.animation.pause();
+            }
+            this.labelElement.setAttribute('visible', 'true');
           });
 
-          // Triggered when cursor moves away
+          // Unfreeze and resume animation path when looking away
           el.addEventListener('mouseleave', () => {
-            if (this.gazeTimer) {
-              clearTimeout(this.gazeTimer);
-            }
-            // Resume motion and hide text tag
             if (el.components.animation) {
               el.components.animation.play();
             }
@@ -50,7 +41,7 @@
         }
       });
 
-      // 2. MULTI-QUESTION QUIZ SYSTEM MANAGER
+      // 2. MULTI-QUESTION CLOTTING QUIZ ENGINE
       var quizData = [
         {
           q: "Question 1: How does the morphology of a platelet change during\nthe clotting response to a blood vessel injury?\n",
@@ -59,15 +50,15 @@
           correct: "B"
         },
         {
-          q: "Question 2: Which plasma protein is soluble before being\nconverted into an insoluble mesh network?",
+          q: "Question 2: Which plasma protein is completely soluble before being\nconverted into an insoluble network of mesh threads?",
           aText: "A) Fibrinogen",
           bText: "B) Fibrin",
           correct: "A"
         },
         {
-          q: "Question 3: What is the primary function of the red blood cell's\nunique biconcave disc shape adaptation?",
-          aText: "A) Engulf Bacteria",
-          bText: "B) Maximize SA:Vol",
+          q: "Question 3: What is the primary functional advantage of the red blood cell's\nunique biconcave disc shape adaptation?",
+          aText: "A) Engulfing Pathogens",
+          bText: "B) Maximizing SA:Vol Ratio",
           correct: "B"
         }
       ];
@@ -92,23 +83,21 @@
             var feedbackText = document.querySelector('#quizFeedback');
             
             if (data.choice === activeQuestion.correct) {
-              feedbackText.setAttribute('text', 'value: CORRECT! Moving to next concept...; color: #2ecc71');
+              feedbackText.setAttribute('text', 'value: CORRECT! Advancing to next concept...; color: #2ecc71');
               
               setTimeout(() => {
                 currentQuestionIndex++;
                 if (currentQuestionIndex >= quizData.length) {
-                  currentQuestionIndex = 0; // Loop back to start
+                  currentQuestionIndex = 0; // Loop quiz back to start
                 }
-                // Update Quiz Board Visuals
                 var nextQuestion = quizData[currentQuestionIndex];
                 document.querySelector('#questionText').setAttribute('text', 'value: ' + nextQuestion.q);
                 document.querySelector('#textA').setAttribute('text', 'value: ' + nextQuestion.aText);
                 document.querySelector('#textB').setAttribute('text', 'value: ' + nextQuestion.bText);
                 feedbackText.setAttribute('text', 'value: [Gaze at your choice]; color: #ffffff');
               }, 2000);
-
             } else {
-              feedbackText.setAttribute('text', 'value: INCORRECT! Review morphology charts and try again.; color: #e74c3c');
+              feedbackText.setAttribute('text', 'value: INCORRECT! Review the visual panels and try again.; color: #e74c3c');
             }
           });
         }
@@ -128,6 +117,7 @@
       </a-plane>
 
       <a-entity class="flow-clickable" gaze-interact="label: Red Blood Cell (Biconcave Disc)"
+                geometry="primitive: sphere; radius: 1.1" material="opacity: 0; transparent: true; depthWrite: false"
                 position="1.8 1.2 -25" rotation="30 10 40"
                 animation="property: position; from: 1.8 1.2 -25; to: 1.8 1.2 15; dur: 12000; loop: true; easing: linear">
           <a-torus color="#ff1111" radius="0.45" tube="0.14" scale="1 1 0.45"></a-torus>
@@ -135,6 +125,7 @@
       </a-entity>
 
       <a-entity class="flow-clickable" gaze-interact="label: Red Blood Cell (Biconcave Disc)"
+                geometry="primitive: sphere; radius: 1.1" material="opacity: 0; transparent: true; depthWrite: false"
                 position="-2.2 3.0 -20" rotation="10 70 20"
                 animation="property: position; from: -2.2 3.0 -20; to: -2.2 3.0 15; dur: 11000; loop: true; easing: linear">
           <a-torus color="#ff1111" radius="0.45" tube="0.14" scale="1 1 0.45"></a-torus>
@@ -142,6 +133,7 @@
       </a-entity>
 
       <a-entity class="flow-clickable" gaze-interact="label: Red Blood Cell (Biconcave Disc)"
+                geometry="primitive: sphere; radius: 1.1" material="opacity: 0; transparent: true; depthWrite: false"
                 position="0.6 4.2 -28" rotation="80 20 10"
                 animation="property: position; from: 0.6 4.2 -28; to: 0.6 4.2 15; dur: 14000; loop: true; easing: linear">
           <a-torus color="#ff1111" radius="0.45" tube="0.14" scale="1 1 0.45"></a-torus>
@@ -149,6 +141,7 @@
       </a-entity>
 
       <a-entity class="flow-clickable" gaze-interact="label: Phagocyte (Lobed Nucleus)"
+                geometry="primitive: sphere; radius: 1.4" material="opacity: 0; transparent: true; depthWrite: false"
                 position="-1.8 1.6 -22"
                 animation="property: position; from: -1.8 1.6 -22; to: -1.8 1.6 15; dur: 13000; loop: true; easing: linear">
           <a-sphere radius="0.85" color="#ffffff" opacity="0.45" transparent="true">
@@ -159,6 +152,7 @@
       </a-entity>
 
       <a-entity class="flow-clickable" gaze-interact="label: Lymphocyte (Large Round Nucleus)"
+                geometry="primitive: sphere; radius: 1.3" material="opacity: 0; transparent: true; depthWrite: false"
                 position="2.0 2.5 -26"
                 animation="property: position; from: 2.0 2.5 -26; to: 2.0 2.5 15; dur: 15000; loop: true; easing: linear">
           <a-sphere radius="0.8" color="#ffffff" opacity="0.45" transparent="true">
@@ -166,19 +160,25 @@
           </a-sphere>
       </a-entity>
 
-      <a-octahedron class="flow-clickable" gaze-interact="label: Inactive Platelet Fragment"
-                    color="#ffb300" radius="0.08" position="-0.8 2.2 -18"
-                    animation="property: position; from: -0.8 2.2 -18; to: -0.8 2.2 15; dur: 10000; loop: true; easing: linear"></a-octahedron>
+      <a-entity class="flow-clickable" gaze-interact="label: Inactive Platelet Fragment"
+                geometry="primitive: sphere; radius: 0.8" material="opacity: 0; transparent: true; depthWrite: false"
+                position="-0.8 2.2 -18"
+                animation="property: position; from: -0.8 2.2 -18; to: -0.8 2.2 15; dur: 10000; loop: true; easing: linear">
+          <a-octahedron color="#ffb300" radius="0.08" rotation="10 20 30"></a-octahedron>
+      </a-entity>
 
-      <a-octahedron class="flow-clickable" gaze-interact="label: Inactive Platelet Fragment"
-                    color="#ffa000" radius="0.07" position="1.4 1.5 -21"
-                    animation="property: position; from: 1.4 1.5 -21; to: 1.4 1.5 15; dur: 12000; loop: true; easing: linear"></a-octahedron>
+      <a-entity class="flow-clickable" gaze-interact="label: Inactive Platelet Fragment"
+                geometry="primitive: sphere; radius: 0.8" material="opacity: 0; transparent: true; depthWrite: false"
+                position="1.4 1.5 -21"
+                animation="property: position; from: 1.4 1.5 -21; to: 1.4 1.5 15; dur: 12000; loop: true; easing: linear">
+          <a-octahedron color="#ffa000" radius="0.07" rotation="40 50 10"></a-octahedron>
+      </a-entity>
 
 
       <a-entity position="0 -5.8 -12">
-        <a-cylinder id="fibrinMesh" color="#bdc3c7" height="4" radius="0.02" rotation="0 0 55"></a-cylinder>
-        <a-cylinder color="#bdc3c7" height="4" radius="0.02" rotation="0 0 -35"></a-cylinder>
-        <a-cylinder color="#bdc3c7" height="4" radius="0.02" rotation="30 90 10"></a-cylinder>
+        <a-cylinder id="fibrinMesh" color="#bdc3c7" height="4" radius="0.025" rotation="0 0 55"></a-cylinder>
+        <a-cylinder color="#bdc3c7" height="4" radius="0.025" rotation="0 0 -35"></a-cylinder>
+        <a-cylinder color="#bdc3c7" height="4" radius="0.025" rotation="30 90 10"></a-cylinder>
 
         <a-entity position="0.3 0.3 0.1" rotation="20 40 10">
           <a-torus color="#cc0000" radius="0.4" tube="0.12" scale="1 1 0.4"></a-torus>
@@ -190,7 +190,7 @@
           <a-icosahedron color="#ff7f50" radius="0.16" rotation="45 45 45" scale="1 1.6 1"></a-icosahedron>
         </a-entity>
 
-        <a-text value="Insoluble Fibrin Threads\n(Traps blood cells to build clot)" position="1.2 0.8 0" color="#ffffff" width="3.5" align="left"></a-text>
+        <a-text value="Insoluble Fibrin Threads\n(Forms mesh network to trap cells)" position="1.4 0.8 0" color="#ffffff" width="3.5" align="left"></a-text>
         <a-text value="Activated Spiky Platelet" position="-2.2 0.8 0" color="#ffffff" width="3.5" align="right"></a-text>
       </a-entity>
 
@@ -199,14 +199,14 @@
         <a-plane color="#111" width="2.6" height="3.4" opacity="0.95" transparent="true">
           <a-text value="CLOT BIO-PATHWAY" align="center" color="#ffcc00" width="4.5" position="0 1.4 0.01"></a-text>
           
-          <a-text value="1. SOLUBLE FIBRINOGEN\n(Free-floating plasma proteins)" align="center" color="#ddd" width="2.8" position="0 0.9 0.01"></a-text>
+          <a-text value="1. SOLUBLE FIBRINOGEN\n(Free Plasma Proteins)" align="center" color="#ddd" width="2.8" position="0 0.9 0.01"></a-text>
           <a-sphere color="#ffffff" radius="0.05" position="-0.4 0.5 0.02"></a-sphere>
           <a-sphere color="#ffffff" radius="0.05" position="0 0.53 0.02"></a-sphere>
           <a-sphere color="#ffffff" radius="0.05" position="0.4 0.48 0.02"></a-sphere>
 
-          <a-text value="[ Thrombin Enzyme Action ]\n▼" align="center" color="#ff3333" width="2.5" position="0 0.1 0.01"></a-text>
+          <a-text value="[ Thrombin Conversion ]\n▼" align="center" color="#ff3333" width="2.5" position="0 0.1 0.01"></a-text>
 
-          <a-text value="2. INSOLUBLE FIBRIN\n(Polymerized mesh strands)" align="center" color="#ddd" width="2.8" position="0 -0.4 0.01"></a-text>
+          <a-text value="2. INSOLUBLE FIBRIN\n(Polymerized Mesh Strands)" align="center" color="#ddd" width="2.8" position="0 -0.4 0.01"></a-text>
           <a-cylinder color="#cccccc" height="0.6" radius="0.012" position="-0.2 -0.9 0.02" rotation="0 0 45"></a-cylinder>
           <a-cylinder color="#cccccc" height="0.6" radius="0.012" position="0.2 -0.9 0.02" rotation="0 0 -45"></a-cylinder>
           <a-cylinder color="#cccccc" height="0.7" radius="0.012" position="0 -1.0 0.02" rotation="0 90 90"></a-cylinder>
