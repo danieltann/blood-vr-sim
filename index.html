@@ -50,14 +50,29 @@
         </a-sphere>
         <a-text value="Lymphocyte" position="0 1.2 0" align="center" width="3.5" color="#fff"></a-text>
         
-        <a-torus-knot color="#ffffff" radius="0.05" tube="0.01" p="2" q="3" position="0.5 0.5 1"></a-torus-knot>
-        <a-torus-knot color="#ffffff" radius="0.05" tube="0.01" p="2" q="3" position="0.8 -0.2 1.5"></a-torus-knot>
+        <a-entity position="0.5 0.5 1" rotation="10 20 0">
+          <a-cylinder color="#ffffff" radius="0.015" height="0.15" position="0 0 0"></a-cylinder>
+          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="0.04 0.09 0" rotation="0 0 -45"></a-cylinder>
+          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="-0.04 0.09 0" rotation="0 0 45"></a-cylinder>
+        </a-entity>
+
+        <a-entity position="0.8 -0.2 1.5" rotation="45 45 10">
+          <a-cylinder color="#ffffff" radius="0.015" height="0.15" position="0 0 0"></a-cylinder>
+          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="0.04 0.09 0" rotation="0 0 -45"></a-cylinder>
+          <a-cylinder color="#ffffff" radius="0.015" height="0.1" position="-0.04 0.09 0" rotation="0 0 45"></a-cylinder>
+        </a-entity>
 
         <a-entity position="2 0.5 0">
           <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="0 0 0"></a-sphere>
           <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="0.15 0.1 0.05" rotation="30 45 0"></a-sphere>
           <a-sphere color="#22aa22" scale="0.08 0.2 0.08" position="-0.1 0.1 -0.05" rotation="-20 10 30"></a-sphere>
-          <a-torus-knot color="#ffffff" radius="0.05" tube="0.01" p="2" q="3" position="0.08 0.05 0.02"></a-torus-knot>
+          
+          <a-entity position="0.05 0.05 0" rotation="0 45 30">
+            <a-cylinder color="#ffffff" radius="0.012" height="0.12" position="0 0 0"></a-cylinder>
+            <a-cylinder color="#ffffff" radius="0.012" height="0.08" position="0.03 0.07 0" rotation="0 0 -45"></a-cylinder>
+            <a-cylinder color="#ffffff" radius="0.012" height="0.08" position="-0.03 0.07 0" rotation="0 0 45"></a-cylinder>
+          </a-entity>
+          
           <a-text value="Agglutination" position="0 -0.4 0" align="center" width="2.5" color="#fff"></a-text>
         </a-entity>
       </a-entity>
